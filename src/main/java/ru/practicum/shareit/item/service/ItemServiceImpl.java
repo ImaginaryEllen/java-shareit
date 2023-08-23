@@ -31,7 +31,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto update(Long itemId, Long userId, ItemDto itemDto) {
-        Item checkItem =itemRepository.getById(itemId)
+        Item checkItem = itemRepository.getById(itemId)
                 .orElseThrow(() -> new NotFoundException("Not found item with id: " + itemId));
         User owner = userRepository.getById(userId)
                 .orElseThrow(() -> new NotFoundException("Not found user with id: " + userId));
