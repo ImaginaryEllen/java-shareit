@@ -16,7 +16,6 @@ import static ru.practicum.shareit.constant.Constant.USER_ID;
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
-@Validated
 public class ItemController {
     private final ItemService itemService;
 

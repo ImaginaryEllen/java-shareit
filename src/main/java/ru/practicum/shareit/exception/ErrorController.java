@@ -27,16 +27,9 @@ public class ErrorController {
         return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler
+    @ExceptionHandler({ConstraintViolationException.class, MethodArgumentNotValidException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handlerConstraintViolationException(final ConstraintViolationException e) {
-        log.warn("Error: ", e);
-        return new ErrorResponse(e.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handlerMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
+    public ErrorResponse handlerRuntimeException(final RuntimeException e) {
         log.warn("Error: ", e);
         return new ErrorResponse(e.getMessage());
     }

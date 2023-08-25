@@ -45,7 +45,7 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public List<Item> getAllItems(Long userId) {
-        return userItems.get(userId);
+        return userItems.getOrDefault(userId, Collections.emptyList());
     }
 
     @Override
