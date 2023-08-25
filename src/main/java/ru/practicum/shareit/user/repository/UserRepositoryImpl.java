@@ -1,6 +1,5 @@
 package ru.practicum.shareit.user.repository;
 
-import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.DuplicateException;
 import ru.practicum.shareit.user.model.User;
@@ -8,7 +7,6 @@ import ru.practicum.shareit.user.model.User;
 import java.util.*;
 
 @Repository
-@NoArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
     private final Map<Long, User> users = new HashMap<>();
     private Long lastId = 0L;
@@ -16,12 +14,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public User create(User user) {
         user.setId(++lastId);
-        if (!isDuplicate(user.getId(), user.getEmail())) {
-            --lastId;
-            throw new DuplicateException("Email: " + user.getEmail() + " already exist, please choose another email");
-        }
-        Boolean l = true;
-        System.out.println(l);
+        checkDuplicate(user.getId(), user.getEmail());
         users.put(user.getId(), user);
         return user;
     }
@@ -31,15 +24,13 @@ public class UserRepositoryImpl implements UserRepository {
         String email = updateUser.getEmail();
         String name = updateUser.getName();
         User user = users.get(userId);
-        if (name != null) {
+        if (name != null && !name.isBlank()) {
             user.setName(name);
         }
-        if (email != null && !isDuplicate(userId, email)) {
-            throw new DuplicateException("Email: " + email + " already exist, please choose another email");
-        } else if (email != null) {
+        checkDuplicate(userId, email);
+        if (email != null && !email.isBlank()) {
             user.setEmail(email);
         }
-        users.put(userId, user);
         return user;
     }
 
@@ -58,12 +49,12 @@ public class UserRepositoryImpl implements UserRepository {
         users.remove(userId);
     }
 
-    private Boolean isDuplicate(Long userId, String email) {
+    private void checkDuplicate(Long userId, String email) {
         for (User user : users.values()) {
-            if (user.getEmail().equals(email) && !user.getId().equals(userId)) {
-                return false;
+            if (user.getEmail().equals(email) && !Objects.equals(user.getId(), userId)) {
+                lastId = users.keySet().stream().max(Long::compareTo).get();
+                throw new DuplicateException("Email: " + email + " already exist, please choose another email");
             }
         }
-        return true;
     }
 }

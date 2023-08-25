@@ -1,12 +1,10 @@
 package ru.practicum.shareit.item.dto;
 
-import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 @Component
-@NoArgsConstructor
 public class ItemMapper {
 
     public ItemDto toItemDto(Item item) {
@@ -24,8 +22,7 @@ public class ItemMapper {
                 itemDto.getName(),
                 itemDto.getDescription(),
                 itemDto.getAvailable(),
-                owner,
-                null
+                owner
         );
     }
 }

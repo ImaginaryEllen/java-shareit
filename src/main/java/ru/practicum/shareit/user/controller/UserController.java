@@ -9,12 +9,8 @@ import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.validation.Create;
 import ru.practicum.shareit.validation.Update;
 
-import javax.validation.Valid;
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Validated
 @Slf4j
 @RestController
@@ -24,8 +20,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    @Validated(Create.class)
-    public UserDto create(@RequestBody @Valid UserDto user) {
+    public UserDto create(@RequestBody @Validated(Create.class) UserDto user) {
         log.info("Create user: {} - STARTED", user);
         UserDto userDto = userService.create(user);
         log.info("Create user: {} - FINISHED", userDto);
@@ -33,8 +28,7 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}")
-    @Validated(Update.class)
-    public UserDto update(@PathVariable Long userId, @RequestBody UserDto user) {
+    public UserDto update(@PathVariable Long userId, @RequestBody @Validated(Update.class) UserDto user) {
         log.info("Update user: {} - STARTED", user);
         UserDto userDto = userService.update(userId, user);
         log.info("Update user: {} - FINISHED", userDto);

@@ -55,7 +55,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> search(String text) {
-        if (text.isEmpty()) {
+        if (text.isBlank()) {
             return Collections.emptyList();
         }
         return itemRepository.search(text)

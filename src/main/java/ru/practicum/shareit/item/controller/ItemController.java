@@ -7,14 +7,11 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.validation.Create;
-import ru.practicum.shareit.validation.Update;
 
-import javax.validation.Valid;
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
+import static ru.practicum.shareit.constant.Constant.USER_ID;
+
 @Slf4j
 @RestController
 @RequestMapping("/items")
@@ -24,8 +21,8 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    @Validated(Create.class)
-    public ItemDto create(@RequestBody @Valid ItemDto item, @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ItemDto create(@Validated(Create.class) @RequestBody ItemDto item,
+                          @RequestHeader(USER_ID) Long userId) {
         log.info("Create item: {} - STARTED", item);
         ItemDto itemDto = itemService.create(item, userId);
         log.info("Create item: {} - FINISHED", itemDto);
@@ -33,9 +30,8 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    @Validated(Update.class)
     public ItemDto update(@PathVariable Long itemId,
-                       @RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody ItemDto item) {
+                          @RequestHeader(USER_ID) Long userId, @Validated @RequestBody ItemDto item) {
         log.info("Update user: {} - STARTED", item);
         ItemDto itemDto = itemService.update(itemId, userId, item);
         log.info("Update user: {} - FINISHED", itemDto);
@@ -49,13 +45,13 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto> getAll(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemDto> getAll(@RequestHeader(USER_ID) Long userId) {
         log.info("Get all items by user id: {}", userId);
         return itemService.getAllItems(userId);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> search(@RequestParam(value = "text", required = false) String text) {
+    public List<ItemDto> search(@RequestParam(value = "text") String text) {
         log.info("Search items by text: {}", text);
         return itemService.search(text);
     }
