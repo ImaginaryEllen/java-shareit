@@ -20,7 +20,6 @@ public class ItemRepositoryImpl implements ItemRepository {
         items.put(item.getId(), item);
         final List<Item> items = userItems.computeIfAbsent(item.getOwner().getId(), k -> new ArrayList<>());
         items.add(item);
-        userItems.put(item.getOwner().getId(), items);
         return item;
     }
 
