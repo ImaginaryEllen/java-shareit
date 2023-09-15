@@ -10,7 +10,6 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Setter
 @AllArgsConstructor
-@ToString
 public class UserDto {
     private Long id;
     @NotBlank(groups = Create.class)

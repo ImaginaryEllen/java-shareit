@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.comment.CommentDto;
+import ru.practicum.shareit.item.dto.item.ItemDto;
+import ru.practicum.shareit.item.dto.item.ItemInfoDto;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.validation.Create;
 
@@ -38,13 +40,13 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto get(@PathVariable Long itemId) {
-        log.info("Get item by id: {}", itemId);
-        return itemService.getById(itemId);
+    public ItemInfoDto get(@RequestHeader(USER_ID) Long userId, @PathVariable Long itemId) {
+        log.info("Get item by id: {} and by owner id: {}", itemId, userId);
+        return itemService.getById(userId, itemId);
     }
 
     @GetMapping
-    public List<ItemDto> getAll(@RequestHeader(USER_ID) Long userId) {
+    public List<ItemInfoDto> getAll(@RequestHeader(USER_ID) Long userId) {
         log.info("Get all items by user id: {}", userId);
         return itemService.getAllItems(userId);
     }
@@ -53,5 +55,14 @@ public class ItemController {
     public List<ItemDto> search(@RequestParam(value = "text") String text) {
         log.info("Search items by text: {}", text);
         return itemService.search(text);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDto addComment(@RequestHeader(USER_ID) Long userId,
+                                 @PathVariable Long itemId, @RequestBody CommentDto comment) {
+        log.info("Create comment: {} - STARTED from user with id: {} for item with id: {} ", comment, userId, itemId);
+        CommentDto newComment = itemService.addComment(userId, itemId, comment);
+        log.info("Create comment: {} - FINISHED", newComment);
+        return newComment;
     }
 }

@@ -13,16 +13,15 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @StartBeforeEnd
-public class BookingDto implements Timespan {
-    private Long id;
+@AllArgsConstructor
+public class BookingRequestDto implements Timespan {
+    @NotNull
+    private Long itemId;
     @FutureOrPresent
     @NotNull
     private LocalDateTime start;
     @Future
     @NotNull
     private LocalDateTime end;
-    @NotNull
-    private Long bookerId;
 }

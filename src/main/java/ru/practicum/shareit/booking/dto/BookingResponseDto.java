@@ -3,6 +3,9 @@ package ru.practicum.shareit.booking.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import ru.practicum.shareit.booking.type.StatusType;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.validation.StartBeforeEnd;
 import ru.practicum.shareit.validation.Timespan;
 
@@ -15,7 +18,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @StartBeforeEnd
-public class BookingDto implements Timespan {
+public class BookingResponseDto implements Timespan {
     private Long id;
     @FutureOrPresent
     @NotNull
@@ -23,6 +26,7 @@ public class BookingDto implements Timespan {
     @Future
     @NotNull
     private LocalDateTime end;
-    @NotNull
-    private Long bookerId;
+    private StatusType status;
+    private User booker;
+    private Item item;
 }
