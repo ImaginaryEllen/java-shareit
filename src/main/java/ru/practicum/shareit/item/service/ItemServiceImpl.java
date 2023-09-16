@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
@@ -63,20 +64,18 @@ public class ItemServiceImpl implements ItemService {
         return ItemMapper.toItemDto(itemRepository.save(item));
     }
 
-    @Transactional(readOnly = true)
     @Override
     public ItemInfoDto getById(Long userId, Long itemId) {
         return getItemInfoDto(itemId, userId);
     }
 
-    @Transactional(readOnly = true)
+
     @Override
     public List<ItemInfoDto> getAllItems(Long ownerId) {
         List<Item> items = itemRepository.findAllByOwnerIdOrderById(ownerId);
         return items.stream().map(item -> getItemInfoDto(item.getId(), ownerId)).collect(Collectors.toList());
     }
 
-    @Transactional
     @Override
     public List<ItemDto> search(String text) {
         if (text.isBlank()) {

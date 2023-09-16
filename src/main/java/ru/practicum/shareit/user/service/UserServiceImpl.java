@@ -14,6 +14,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
@@ -38,13 +39,11 @@ public class UserServiceImpl implements UserService {
         return UserMapper.toUserDto(userRepository.save(user));
     }
 
-    @Transactional
     @Override
     public List<UserDto> getAllUsers() {
         return UserMapper.toUserDtoList(userRepository.findAll());
     }
 
-    @Transactional(readOnly = true)
     @Override
     public UserDto getById(Long userId) {
         return UserMapper.toUserDto(checkUser(userId));

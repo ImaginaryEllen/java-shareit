@@ -22,6 +22,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
@@ -61,7 +62,6 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.toBookingResponseDto(bookingRepository.save(booking));
     }
 
-    @Transactional(readOnly = true)
     @Override
     public BookingResponseDto getById(Long userId, Long bookingId) {
         User user = checkUser(userId);
@@ -72,7 +72,6 @@ public class BookingServiceImpl implements BookingService {
         throw new NotFoundException("User with id: " + userId + " is not owner or booker");
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<BookingResponseDto> getBookingsByBookerIdAndStatus(Long bookerId, String state) {
         StateType stateType = checkStateType(state);
@@ -100,7 +99,6 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<BookingResponseDto> getBookingsByOwnerAndState(Long ownerId, String state) {
         StateType stateType = checkStateType(state);
