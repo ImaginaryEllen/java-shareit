@@ -8,10 +8,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
 
 @Slf4j
 @RestControllerAdvice
-public class ErrorController {
+public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -27,9 +28,18 @@ public class ErrorController {
         return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler({ConstraintViolationException.class, MethodArgumentNotValidException.class})
+    @ExceptionHandler({ConstraintViolationException.class,
+            MethodArgumentNotValidException.class,
+            ValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handlerRuntimeException(final RuntimeException e) {
+        log.warn("Error: ", e);
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handlerStatusTypeException(final StatusTypeException e) {
         log.warn("Error: ", e);
         return new ErrorResponse(e.getMessage());
     }
