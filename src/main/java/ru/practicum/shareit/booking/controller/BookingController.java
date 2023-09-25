@@ -2,12 +2,14 @@ package ru.practicum.shareit.booking.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.service.BookingService;
 
+import javax.validation.constraints.Min;
 import java.util.List;
 
 import static ru.practicum.shareit.constant.Constant.USER_ID;
@@ -16,6 +18,7 @@ import static ru.practicum.shareit.constant.Constant.USER_ID;
 @RequestMapping(path = "/bookings")
 @Slf4j
 @RequiredArgsConstructor
+@Validated
 public class BookingController {
     private final BookingService bookingService;
 
@@ -45,16 +48,22 @@ public class BookingController {
     }
 
     @GetMapping
-    public List<BookingResponseDto> getBookingsByUser(@RequestHeader(USER_ID) Long userId,
-                                                      @RequestParam(value = "state", defaultValue = "ALL") String state) {
+    public List<BookingResponseDto> getByUser(@RequestHeader(USER_ID) Long userId,
+                                              @RequestParam(value = "state", defaultValue = "ALL") String state,
+                                              @RequestParam(name = "from", defaultValue = "0") @Min(0) Integer from,
+                                              @RequestParam(name = "size", defaultValue = "10") @Min(1) Integer size) {
         log.info("Getting bookings list by booker id: {} with state : {}", userId, state);
-        return bookingService.getBookingsByBookerIdAndStatus(userId, state);
+        return bookingService.getBookingsByBookerIdAndState(userId, state,
+                PageRequest.of(from > 0 ? from / size : 0, size));
     }
 
     @GetMapping("/owner")
-    public List<BookingResponseDto> getBookingsByOwner(@RequestHeader(USER_ID) Long userId,
-                                                       @RequestParam(value = "state", defaultValue = "ALL") String state) {
+    public List<BookingResponseDto> getByOwner(@RequestHeader(USER_ID) Long userId,
+                                               @RequestParam(value = "state", defaultValue = "ALL") String state,
+                                               @RequestParam(name = "from", defaultValue = "0") @Min(0) Integer from,
+                                               @RequestParam(name = "size", defaultValue = "10") @Min(1) Integer size) {
         log.info("Getting bookings list by owner id: {} with state : {}", userId, state);
-        return bookingService.getBookingsByOwnerAndState(userId, state);
+        return bookingService.getBookingsByOwnerAndState(userId, state,
+                PageRequest.of(from > 0 ? from / size : 0, size));
     }
 }

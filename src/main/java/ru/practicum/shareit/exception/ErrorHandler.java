@@ -21,13 +21,6 @@ public class ErrorHandler {
         return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handlerDuplicateException(final DuplicateException e) {
-        log.warn("Error: ", e);
-        return new ErrorResponse(e.getMessage());
-    }
-
     @ExceptionHandler({ConstraintViolationException.class,
             MethodArgumentNotValidException.class,
             ValidationException.class})

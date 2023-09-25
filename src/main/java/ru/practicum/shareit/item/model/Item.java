@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.*;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
@@ -23,10 +24,13 @@ public class Item {
     private String description;
     @Column(nullable = false)
     private Boolean available;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY) //, cascade = CascadeType.REFRESH
     @JoinColumn(name = "owner_id", referencedColumnName = "user_id")
     private User owner;
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id", updatable = false, insertable = false)
     private List<Comment> comments;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "request_id")
+    private ItemRequest itemRequest;
 }

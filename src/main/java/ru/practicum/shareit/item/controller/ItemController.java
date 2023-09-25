@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.comment.CommentDto;
@@ -10,6 +11,7 @@ import ru.practicum.shareit.item.dto.item.ItemInfoDto;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.validation.Create;
 
+import javax.validation.constraints.Min;
 import java.util.List;
 
 import static ru.practicum.shareit.constant.Constant.USER_ID;
@@ -46,15 +48,19 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemInfoDto> getAll(@RequestHeader(USER_ID) Long userId) {
+    public List<ItemInfoDto> getAll(@RequestHeader(USER_ID) Long userId,
+                                    @RequestParam(name = "from", defaultValue = "0") @Min(0) Integer from,
+                                    @RequestParam(name = "size", defaultValue = "10") @Min(1) Integer size) {
         log.info("Get all items by user id: {}", userId);
-        return itemService.getAllItems(userId);
+        return itemService.getAllItems(userId, PageRequest.of(from > 0 ? from / size : 0, size));
     }
 
     @GetMapping("/search")
-    public List<ItemDto> search(@RequestParam(value = "text") String text) {
+    public List<ItemDto> search(@RequestParam(value = "text") String text,
+                                @RequestParam(name = "from", defaultValue = "0") @Min(0) Integer from,
+                                @RequestParam(name = "size", defaultValue = "10") @Min(1) Integer size) {
         log.info("Search items by text: {}", text);
-        return itemService.search(text);
+        return itemService.search(text, PageRequest.of(from > 0 ? from / size : 0, size));
     }
 
     @PostMapping("/{itemId}/comment")
