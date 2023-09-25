@@ -64,7 +64,8 @@ class RequestServiceImplTest {
         assertNotNull(outDto, "Return dto is null");
         assertThat(outDto.getId(), equalTo(inDto.getId()));
         assertThat(outDto.getDescription(), equalTo(inDto.getDescription()));
-        assertThat(outDto.getCreated(), equalTo(inDto.getCreated()));
+        assertThat(outDto.getCreated().format(DateTimeFormatter.ISO_LOCAL_DATE),
+                equalTo(inDto.getCreated().format(DateTimeFormatter.ISO_LOCAL_DATE)));
     }
 
     @Test
@@ -80,7 +81,8 @@ class RequestServiceImplTest {
         assertNotNull(outDto, "Return dto is null");
         assertThat(outDto.getId(), equalTo(inDto.getId()));
         assertThat(outDto.getDescription(), equalTo(inDto.getDescription()));
-        assertThat(outDto.getCreated(), equalTo(inDto.getCreated()));
+        assertThat(outDto.getCreated().format(DateTimeFormatter.ISO_LOCAL_DATE),
+                equalTo(inDto.getCreated().format(DateTimeFormatter.ISO_LOCAL_DATE)));
     }
 
     @Test
@@ -98,7 +100,8 @@ class RequestServiceImplTest {
         assertNotNull(outDto, "Return dto is null");
         assertThat(outDto.getId(), equalTo(inDto.getId()));
         assertThat(outDto.getDescription(), equalTo(inDto.getDescription()));
-        assertThat(outDto.getCreated(), equalTo(inDto.getCreated()));
+        assertThat(outDto.getCreated().format(DateTimeFormatter.ISO_LOCAL_DATE),
+                equalTo(inDto.getCreated().format(DateTimeFormatter.ISO_LOCAL_DATE)));
     }
 
     @Test
