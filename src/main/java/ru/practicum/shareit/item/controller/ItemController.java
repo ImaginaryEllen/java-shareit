@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.comment.CommentDto;
@@ -11,7 +12,8 @@ import ru.practicum.shareit.item.dto.item.ItemInfoDto;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.validation.Create;
 
-import javax.validation.constraints.Min;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 import static ru.practicum.shareit.constant.Constant.USER_ID;
@@ -49,18 +51,18 @@ public class ItemController {
 
     @GetMapping
     public List<ItemInfoDto> getAll(@RequestHeader(USER_ID) Long userId,
-                                    @RequestParam(name = "from", defaultValue = "0") @Min(0) Integer from,
-                                    @RequestParam(name = "size", defaultValue = "10") @Min(1) Integer size) {
+                                    @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
+                                    @RequestParam(name = "size", defaultValue = "10") @Positive Integer size) {
         log.info("Get all items by user id: {}", userId);
-        return itemService.getAllItems(userId, PageRequest.of(from > 0 ? from / size : 0, size));
+        return itemService.getAllItems(userId, getPageable(from, size));
     }
 
     @GetMapping("/search")
     public List<ItemDto> search(@RequestParam(value = "text") String text,
-                                @RequestParam(name = "from", defaultValue = "0") @Min(0) Integer from,
-                                @RequestParam(name = "size", defaultValue = "10") @Min(1) Integer size) {
+                                @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
+                                @RequestParam(name = "size", defaultValue = "10") @Positive Integer size) {
         log.info("Search items by text: {}", text);
-        return itemService.search(text, PageRequest.of(from > 0 ? from / size : 0, size));
+        return itemService.search(text, getPageable(from, size));
     }
 
     @PostMapping("/{itemId}/comment")
@@ -70,5 +72,9 @@ public class ItemController {
         CommentDto newComment = itemService.addComment(userId, itemId, comment);
         log.info("Create comment: {} - FINISHED", newComment);
         return newComment;
+    }
+
+    private Pageable getPageable(Integer from, Integer size) {
+        return PageRequest.of(from > 0 ? from / size : 0, size);
     }
 }

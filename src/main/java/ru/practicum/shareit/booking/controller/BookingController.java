@@ -3,13 +3,15 @@ package ru.practicum.shareit.booking.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.service.BookingService;
 
-import javax.validation.constraints.Min;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 import static ru.practicum.shareit.constant.Constant.USER_ID;
@@ -50,8 +52,8 @@ public class BookingController {
     @GetMapping
     public List<BookingResponseDto> getByUser(@RequestHeader(USER_ID) Long userId,
                                               @RequestParam(value = "state", defaultValue = "ALL") String state,
-                                              @RequestParam(name = "from", defaultValue = "0") @Min(0) Integer from,
-                                              @RequestParam(name = "size", defaultValue = "10") @Min(1) Integer size) {
+                                              @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
+                                              @RequestParam(name = "size", defaultValue = "10") @Positive Integer size) {
         log.info("Getting bookings list by booker id: {} with state : {}", userId, state);
         return bookingService.getBookingsByBookerIdAndState(userId, state,
                 PageRequest.of(from > 0 ? from / size : 0, size));
@@ -60,10 +62,13 @@ public class BookingController {
     @GetMapping("/owner")
     public List<BookingResponseDto> getByOwner(@RequestHeader(USER_ID) Long userId,
                                                @RequestParam(value = "state", defaultValue = "ALL") String state,
-                                               @RequestParam(name = "from", defaultValue = "0") @Min(0) Integer from,
-                                               @RequestParam(name = "size", defaultValue = "10") @Min(1) Integer size) {
+                                               @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
+                                               @RequestParam(name = "size", defaultValue = "10") @Positive Integer size) {
         log.info("Getting bookings list by owner id: {} with state : {}", userId, state);
-        return bookingService.getBookingsByOwnerAndState(userId, state,
-                PageRequest.of(from > 0 ? from / size : 0, size));
+        return bookingService.getBookingsByOwnerAndState(userId, state, getPageable(from, size));
+    }
+
+    private Pageable getPageable(Integer from, Integer size) {
+        return PageRequest.of(from > 0 ? from / size : 0, size);
     }
 }

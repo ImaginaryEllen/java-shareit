@@ -10,7 +10,8 @@ import ru.practicum.shareit.request.dto.ItemRequestOutDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.validation.Create;
 
-import javax.validation.constraints.Min;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 import static ru.practicum.shareit.constant.Constant.USER_ID;
@@ -46,8 +47,8 @@ public class ItemRequestController {
 
     @GetMapping("/all")
     public List<ItemRequestOutDto> getAll(@RequestHeader(USER_ID) Long userId,
-                                          @RequestParam(name = "from", defaultValue = "0") @Min(0) Integer from,
-                                          @RequestParam(name = "size", defaultValue = "10") @Min(1)  Integer size) {
+                                          @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
+                                          @RequestParam(name = "size", defaultValue = "10") @Positive Integer size) {
         log.info("Getting all requests for user with id: {}", userId);
         return itemRequestService.getAll(userId, PageRequest.of(from > 0 ? from / size : 0, size));
     }
