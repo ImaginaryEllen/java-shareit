@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.type.StatusType;
@@ -16,6 +17,8 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -34,13 +37,19 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final BookingRepository bookingRepository;
+    private final ItemRequestRepository itemRequestRepository;
 
     @Transactional
     @Override
     public ItemDto create(ItemDto itemDto, Long userId) {
         User owner = checkUser(userId);
         List<Comment> comments = new ArrayList<>();
-        return ItemMapper.toItemDto(itemRepository.save(ItemMapper.toItem(itemDto, owner, comments)));
+        ItemRequest itemRequest = null;
+        if (itemDto.getRequestId() != null) {
+            itemRequest = itemRequestRepository.findById(itemDto.getRequestId())
+                    .orElseThrow(() -> new NotFoundException("Not found request with id: " + itemDto.getRequestId()));
+        }
+        return ItemMapper.toItemDto(itemRepository.save(ItemMapper.toItem(itemDto, owner, comments, itemRequest)));
     }
 
     @Transactional
@@ -71,17 +80,18 @@ public class ItemServiceImpl implements ItemService {
 
 
     @Override
-    public List<ItemInfoDto> getAllItems(Long ownerId) {
-        List<Item> items = itemRepository.findAllByOwnerIdOrderById(ownerId);
+    public List<ItemInfoDto> getAllItems(Long ownerId, Pageable pageable) {
+        List<Item> items = itemRepository.findByOwnerIdOrderById(ownerId, pageable);
         return items.stream().map(item -> getItemInfoDto(item.getId(), ownerId)).collect(Collectors.toList());
     }
 
     @Override
-    public List<ItemDto> search(String text) {
+    public List<ItemDto> search(String text, Pageable pageable) {
         if (text.isBlank()) {
             return Collections.emptyList();
         }
-        return ItemMapper.toItemDtoList(itemRepository.search(text));
+        List<Item> items = itemRepository.search(text, pageable);
+        return ItemMapper.toItemDtoList(items);
     }
 
     @Transactional

@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.repository;
 
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,41 +22,40 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @EntityGraph(value = "Booking.entity", type = EntityGraph.EntityGraphType.LOAD)
     @Query("select b from Booking as b where b.booker.id = ?1 order by b.startTime desc")
-    List<Booking> findAllByBookerIdAndOrderByStartTimeDesc(Long bookerId);
+    List<Booking> findAllByBookerIdAndOrderByStartTimeDesc(Long bookerId, Pageable pageable);
 
     @EntityGraph(value = "Booking.entity", type = EntityGraph.EntityGraphType.LOAD)
     List<Booking> findAllByBookerIdAndStartTimeIsBeforeAndEndTimeIsAfterOrderByStartTimeAsc(
-            Long bookerId, LocalDateTime nowStart, LocalDateTime nowEnd);
+            Long bookerId, LocalDateTime nowStart, LocalDateTime nowEnd, Pageable pageable);
 
     @EntityGraph(value = "Booking.entity", type = EntityGraph.EntityGraphType.LOAD)
     List<Booking> findAllByBookerIdAndStartTimeIsBeforeAndEndTimeIsBeforeOrderByStartTimeDesc(
-            Long bookerId, LocalDateTime nowStart, LocalDateTime nowEnd);
+            Long bookerId, LocalDateTime nowStart, LocalDateTime nowEnd, Pageable pageable);
 
     @EntityGraph(value = "Booking.entity", type = EntityGraph.EntityGraphType.LOAD)
     List<Booking> findAllByBookerIdAndStartTimeIsAfterAndEndTimeIsAfterOrderByStartTimeDesc(
-            Long bookerId, LocalDateTime nowStart, LocalDateTime nowEnd);
+            Long bookerId, LocalDateTime nowStart, LocalDateTime nowEnd, Pageable pageable);
 
     @EntityGraph(value = "Booking.entity", type = EntityGraph.EntityGraphType.LOAD)
-    List<Booking> findAllByBookerIdAndStatusOrderByStartTimeDesc(Long bookerId, StatusType statusType);
+    List<Booking> findAllByBookerIdAndStatusOrderByStartTimeDesc(Long bookerId, StatusType statusType, Pageable pageable);
 
     @EntityGraph(value = "Booking.entity")
-    @Query("select b from Booking as b where b.item.owner.id = ?1 order by b.startTime desc")
-    List<Booking> findAllByItemOwnerIdAndOrderByStartTimeDesc(Long ownerId);
+    List<Booking> findAllByItemOwnerIdOrderByStartTimeDesc(Long ownerId, Pageable pageable);
 
     @EntityGraph(value = "Booking.entity", type = EntityGraph.EntityGraphType.LOAD)
     List<Booking> findAllByItemOwnerIdAndStartTimeIsBeforeAndEndTimeIsAfterOrderByStartTimeDesc(
-            Long ownerId, LocalDateTime nowStart, LocalDateTime nowEnd);
+            Long ownerId, LocalDateTime nowStart, LocalDateTime nowEnd, Pageable pageable);
 
     @EntityGraph(value = "Booking.entity", type = EntityGraph.EntityGraphType.LOAD)
     List<Booking> findAllByItemOwnerIdAndStartTimeIsBeforeAndEndTimeIsBeforeOrderByStartTimeDesc(
-            Long ownerId, LocalDateTime nowStart, LocalDateTime nowEnd);
+            Long ownerId, LocalDateTime nowStart, LocalDateTime nowEnd, Pageable pageable);
 
     @EntityGraph(value = "Booking.entity", type = EntityGraph.EntityGraphType.LOAD)
     List<Booking> findAllByItemOwnerIdAndStartTimeIsAfterAndEndTimeIsAfterOrderByStartTimeDesc(
-            Long ownerId, LocalDateTime nowStart, LocalDateTime nowEnd);
+            Long ownerId, LocalDateTime nowStart, LocalDateTime nowEnd, Pageable pageable);
 
     @EntityGraph(value = "Booking.entity", type = EntityGraph.EntityGraphType.LOAD)
-    List<Booking> findAllByItemOwnerIdAndStatusOrderByStartTimeDesc(Long ownerId, StatusType statusType);
+    List<Booking> findAllByItemOwnerIdAndStatusOrderByStartTimeDesc(Long ownerId, StatusType statusType, Pageable pageable);
 
     @EntityGraph(value = "Booking.entity", type = EntityGraph.EntityGraphType.LOAD)
     @Query("select b from Booking as b " +

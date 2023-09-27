@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingMapper;
@@ -73,56 +74,66 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingResponseDto> getBookingsByBookerIdAndStatus(Long bookerId, String state) {
+    public List<BookingResponseDto> getBookingsByBookerIdAndState(Long bookerId, String state, Pageable pageable) {
         StateType stateType = checkStateType(state);
         User user = checkUser(bookerId);
         LocalDateTime now = LocalDateTime.now();
         switch (stateType) {
             case CURRENT:
                 return BookingMapper.toBookingResponseDtoList(bookingRepository
-                        .findAllByBookerIdAndStartTimeIsBeforeAndEndTimeIsAfterOrderByStartTimeAsc(bookerId, now, now));
+                        .findAllByBookerIdAndStartTimeIsBeforeAndEndTimeIsAfterOrderByStartTimeAsc(
+                                bookerId, now, now, pageable));
             case PAST:
                 return BookingMapper.toBookingResponseDtoList(bookingRepository
-                        .findAllByBookerIdAndStartTimeIsBeforeAndEndTimeIsBeforeOrderByStartTimeDesc(bookerId, now, now));
+                        .findAllByBookerIdAndStartTimeIsBeforeAndEndTimeIsBeforeOrderByStartTimeDesc(
+                                bookerId, now, now, pageable));
             case FUTURE:
                 return BookingMapper.toBookingResponseDtoList(bookingRepository
-                        .findAllByBookerIdAndStartTimeIsAfterAndEndTimeIsAfterOrderByStartTimeDesc(bookerId, now, now));
+                        .findAllByBookerIdAndStartTimeIsAfterAndEndTimeIsAfterOrderByStartTimeDesc(
+                                bookerId, now, now, pageable));
             case WAITING:
                 return BookingMapper.toBookingResponseDtoList(bookingRepository
-                        .findAllByBookerIdAndStatusOrderByStartTimeDesc(bookerId, StatusType.WAITING));
+                        .findAllByBookerIdAndStatusOrderByStartTimeDesc(
+                                bookerId, StatusType.WAITING, pageable));
             case REJECTED:
                 return BookingMapper.toBookingResponseDtoList(bookingRepository
-                        .findAllByBookerIdAndStatusOrderByStartTimeDesc(bookerId, StatusType.REJECTED));
+                        .findAllByBookerIdAndStatusOrderByStartTimeDesc(
+                                bookerId, StatusType.REJECTED, pageable));
             default:
                 return BookingMapper.toBookingResponseDtoList(bookingRepository
-                        .findAllByBookerIdAndOrderByStartTimeDesc(bookerId));
+                        .findAllByBookerIdAndOrderByStartTimeDesc(bookerId, pageable));
         }
     }
 
     @Override
-    public List<BookingResponseDto> getBookingsByOwnerAndState(Long ownerId, String state) {
+    public List<BookingResponseDto> getBookingsByOwnerAndState(Long ownerId, String state, Pageable pageable) {
         StateType stateType = checkStateType(state);
         User user = checkUser(ownerId);
         LocalDateTime now = LocalDateTime.now();
         switch (stateType) {
             case CURRENT:
                 return BookingMapper.toBookingResponseDtoList(bookingRepository
-                        .findAllByItemOwnerIdAndStartTimeIsBeforeAndEndTimeIsAfterOrderByStartTimeDesc(ownerId, now, now));
+                        .findAllByItemOwnerIdAndStartTimeIsBeforeAndEndTimeIsAfterOrderByStartTimeDesc(
+                                ownerId, now, now, pageable));
             case PAST:
                 return BookingMapper.toBookingResponseDtoList(bookingRepository
-                        .findAllByItemOwnerIdAndStartTimeIsBeforeAndEndTimeIsBeforeOrderByStartTimeDesc(ownerId, now, now));
+                        .findAllByItemOwnerIdAndStartTimeIsBeforeAndEndTimeIsBeforeOrderByStartTimeDesc(
+                                ownerId, now, now, pageable));
             case FUTURE:
                 return BookingMapper.toBookingResponseDtoList(bookingRepository
-                        .findAllByItemOwnerIdAndStartTimeIsAfterAndEndTimeIsAfterOrderByStartTimeDesc(ownerId, now, now));
+                        .findAllByItemOwnerIdAndStartTimeIsAfterAndEndTimeIsAfterOrderByStartTimeDesc(
+                                ownerId, now, now, pageable));
             case WAITING:
                 return BookingMapper.toBookingResponseDtoList(bookingRepository
-                        .findAllByItemOwnerIdAndStatusOrderByStartTimeDesc(ownerId, StatusType.WAITING));
+                        .findAllByItemOwnerIdAndStatusOrderByStartTimeDesc(
+                                ownerId, StatusType.WAITING, pageable));
             case REJECTED:
                 return BookingMapper.toBookingResponseDtoList(bookingRepository
-                        .findAllByItemOwnerIdAndStatusOrderByStartTimeDesc(ownerId, StatusType.REJECTED));
+                        .findAllByItemOwnerIdAndStatusOrderByStartTimeDesc(
+                                ownerId, StatusType.REJECTED, pageable));
             default:
                 return BookingMapper.toBookingResponseDtoList(bookingRepository
-                        .findAllByItemOwnerIdAndOrderByStartTimeDesc(ownerId));
+                        .findAllByItemOwnerIdOrderByStartTimeDesc(ownerId, pageable));
         }
     }
 

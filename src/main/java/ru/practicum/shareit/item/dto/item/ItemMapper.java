@@ -1,11 +1,13 @@
 package ru.practicum.shareit.item.dto.item;
 
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.dto.comment.CommentDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
@@ -19,18 +21,20 @@ public class ItemMapper {
                 item.getId(),
                 item.getName(),
                 item.getDescription(),
-                item.getAvailable()
+                item.getAvailable(),
+                item.getItemRequest() != null ? item.getItemRequest().getId() : null
         );
     }
 
-    public static Item toItem(ItemDto itemDto, User owner, List<Comment> comments) {
+    public static Item toItem(ItemDto itemDto, User owner, List<Comment> comments, @Nullable ItemRequest itemRequest) {
         return new Item(
                 itemDto.getId(),
                 itemDto.getName(),
                 itemDto.getDescription(),
                 itemDto.getAvailable(),
                 owner,
-                comments
+                comments,
+                itemRequest
         );
     }
 
