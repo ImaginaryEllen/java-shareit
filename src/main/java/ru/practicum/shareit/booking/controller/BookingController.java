@@ -55,8 +55,7 @@ public class BookingController {
                                               @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
                                               @RequestParam(name = "size", defaultValue = "10") @Positive Integer size) {
         log.info("Getting bookings list by booker id: {} with state : {}", userId, state);
-        return bookingService.getBookingsByBookerIdAndState(userId, state,
-                PageRequest.of(from > 0 ? from / size : 0, size));
+        return bookingService.getBookingsByBookerIdAndState(userId, state, getPageable(from, size));
     }
 
     @GetMapping("/owner")
