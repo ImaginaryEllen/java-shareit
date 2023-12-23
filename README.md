@@ -25,7 +25,7 @@ ___
 <summary>Получение вещи по id=2</summary>
 
 ```
-http://localhost:8080//items/2
+http://localhost:8080/items/2
 ```
 
 </details>
